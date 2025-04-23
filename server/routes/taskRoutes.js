@@ -74,4 +74,65 @@ router.post("/", authMiddleware, async (req, res) => {
   }
 });
 
+router.put("/:id", authMiddleware, async (req, res) => {
+  const result = taskInput.partial().safeParse(req.body);
+  if (!result.success) {
+    return res.status(400).json({
+      msg: "Invalid inputs!",
+    });
+  }
+
+  const taskId = req.params.id;
+
+  try {
+    const updateTask = await Task.findOneAndUpdate(
+      { _id: taskId },
+      result.data,
+      { new: true }
+    );
+
+    //console.log(updateTask);
+    if (!updateTask) {
+      return res.status(404).json({
+        msg: "Task not found",
+      });
+    }
+
+    res.json({
+      msg: "Task updated",
+      updatedTask: updateTask,
+    });
+  } catch (e) {
+    console.log(e);
+    res.status(500).json({
+      msg: "Something went wrong!",
+    });
+  }
+});
+
+router.delete("/:id", authMiddleware, async (req, res) => {
+  try {
+    const deleteTask = await Task.findOneAndDelete({
+      _id: req.params.id,
+    });
+
+    //console.log(deleteTask);
+    if (!deleteTask) {
+      return res.status(404).json({
+        msg: "Task not found!",
+      });
+    }
+
+    res.json({
+      msg: "Task deleted successfully !!",
+      deletedTask: deleteTask,
+    });
+  } catch (e) {
+    console.log(e);
+    res.status(500).json({
+      msg: "Something went wrong!",
+    });
+  }
+});
+
 module.exports = router;
