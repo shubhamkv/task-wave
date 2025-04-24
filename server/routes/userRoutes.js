@@ -5,6 +5,7 @@ const bcrypt = require("bcrypt");
 const router = express.Router();
 
 const User = require("../models/userModel");
+const authMiddleware = require("../middleware/authMiddleware");
 
 require("dotenv").config();
 
@@ -94,6 +95,24 @@ router.post("/signin", async (req, res) => {
     res.status(500).json({
       msg: "Error while sign in! Try Again...",
       error: e.message,
+    });
+  }
+});
+
+router.get("/profile", authMiddleware, async (req, res) => {
+  const userId = req.userId;
+  try {
+    const user = await User.findOne({ _id: userId });
+    if (!user) {
+      return res.status(404).json({
+        msg: "User Profile not found !!",
+      });
+    }
+    res.json(user);
+  } catch (e) {
+    console.log(e);
+    res.status(500).json({
+      msg: "Something went wrong...",
     });
   }
 });
