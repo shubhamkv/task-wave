@@ -9,6 +9,7 @@ const taskInput = zod.object({
   title: zod.string().min(1),
   description: zod.string().min(1),
   priority: zod.enum(["low", "medium", "high"]),
+  completed: zod.boolean().optional(),
   dueDate: zod
     .preprocess(
       (arg) => {
@@ -39,6 +40,47 @@ router.get("/", authMiddleware, async (req, res) => {
     console.log(e);
     res.status(500).json({
       msg: "Error while fetching your tasks!",
+    });
+  }
+});
+
+router.get("/stats", authMiddleware, async (req, res) => {
+  try {
+    const userId = req.userId;
+    const allTasks = await Task.find({ userId });
+
+    const now = new Date();
+
+    const stats = {
+      total: allTasks.length,
+      completed: 0,
+      pending: 0,
+      missed: 0,
+    };
+
+    allTasks.map((task) => {
+      if (task.completed == true) stats.completed += 1;
+      else {
+        const todayDate = new Date(
+          now.getFullYear(),
+          now.getMonth(),
+          now.getDate()
+        );
+        const taskDate = new Date(
+          task.dueDate.getFullYear(),
+          task.dueDate.getMonth(),
+          task.dueDate.getDate()
+        );
+        if (todayDate > taskDate) stats.missed += 1;
+        else stats.pending += 1;
+      }
+    });
+
+    res.json(stats);
+  } catch (e) {
+    console.log(e);
+    res.status(500).json({
+      msg: "Failed to fetch task stats",
     });
   }
 });
