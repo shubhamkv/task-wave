@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { axiosInstance } from "../utils/axiosInstance";
 
 export const SignUp = () => {
@@ -26,7 +26,7 @@ export const SignUp = () => {
       setSuccess(res.data.msg);
       setForm({ name: "", username: "", password: "" });
 
-      setTimeout(() => navigate("/signin"), 2000);
+      setTimeout(() => navigate("/signin"), 1000);
     } catch (err) {
       setError(err.response?.data?.msg || "Something went wrong");
       setForm({
@@ -93,12 +93,12 @@ export const SignUp = () => {
         </form>
         <p className="mt-4 text-sm text-center text-gray-600">
           Already have an account?{" "}
-          <a
-            href="/signin"
+          <Link
+            to="/signin"
             className="text-indigo-500 hover:underline font-medium"
           >
             Sign In
-          </a>
+          </Link>
         </p>
       </div>
     </div>

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { axiosInstance } from "../utils/axiosInstance";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuthContext } from "../context/AuthContext";
 
 export const SignIn = () => {
   const navigate = useNavigate();
@@ -10,6 +11,7 @@ export const SignIn = () => {
   });
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const { setToken } = useAuthContext();
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -24,9 +26,11 @@ export const SignIn = () => {
 
       setSuccess(res.data.msg);
       localStorage.setItem("token", res.data.token);
+      console.log(res.data);
+      setToken(res.data.token);
       setForm({ username: "", password: "" });
 
-      setTimeout(() => navigate("/tasks"), 1500);
+      setTimeout(() => navigate("/dashboard"), 500);
     } catch (err) {
       setError(err.response?.data?.msg || "Login failed! Try again.");
       setForm({ username: "", password: "" });
@@ -77,12 +81,12 @@ export const SignIn = () => {
         </form>
         <p className="mt-4 text-sm text-center text-gray-600">
           Don't have an account?{" "}
-          <a
-            href="/signup"
+          <Link
+            to="/signup"
             className="text-indigo-500 hover:underline font-medium"
           >
             Sign Up
-          </a>
+          </Link>
         </p>
       </div>
     </div>
