@@ -22,16 +22,66 @@ const taskInput = zod.object({
         invalid_type_error: "Invalid date format",
       })
     )
-    .refine((date) => date > new Date(), {
-      msg: "dueDate must be in the future",
-    }),
+    .refine(
+      (date) => {
+        const now = new Date();
+
+        const todayDate = new Date(
+          now.getFullYear(),
+          now.getMonth(),
+          now.getDate()
+        );
+        const taskDate = new Date(
+          date.getFullYear(),
+          date.getMonth(),
+          date.getDate()
+        );
+        return taskDate >= todayDate;
+      },
+      {
+        msg: "dueDate must be today or in the future",
+      }
+    ),
 });
 
 router.get("/", authMiddleware, async (req, res) => {
   try {
-    const tasks = await Task.find({
-      userId: req.userId,
-    }).sort({ createdAt: -1 });
+    const { status, priority, createdAt, dueDate } = req.query;
+    const query = { userId: req.userId };
+
+    if (status) {
+      if (status === "completed") query.completed = true;
+      else if (status === "pending") {
+        query.completed = false;
+        query.dueDate = { $gte: new Date() };
+      } else if (status === "missed") {
+        const today = new Date();
+        query.dueDate = { $lt: today };
+        query.completed = false;
+      }
+    }
+
+    if (priority) {
+      query.priority = priority;
+    }
+
+    if (createdAt) {
+      const date = new Date(createdAt);
+      query.createdAt = {
+        $gte: new Date(date.setHours(0, 0, 0, 0)),
+        $lte: new Date(date.setHours(23, 59, 59, 999)),
+      };
+    }
+
+    if (dueDate) {
+      const date = new Date(dueDate);
+      query.dueDate = {
+        $gte: new Date(date.setHours(0, 0, 0, 0)),
+        $lte: new Date(date.setHours(23, 59, 59, 999)),
+      };
+    }
+
+    const tasks = await Task.find(query).sort({ createdAt: -1 });
 
     res.json({
       tasks: tasks,
