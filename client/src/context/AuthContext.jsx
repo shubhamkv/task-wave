@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { axiosInstance } from "../utils/axiosInstance";
+import { jwtDecode } from "jwt-decode";
 
 const AuthContext = createContext();
 
@@ -9,26 +10,42 @@ export const AuthProvider = ({ children }) => {
   const [userName, setUserName] = useState("");
 
   useEffect(() => {
+    const storedToken = localStorage.getItem("token");
+    //console.log(storedToken);
+    if (storedToken) {
+      try {
+        const decoded = jwtDecode(storedToken);
+        const currentTime = Date.now() / 1000;
+
+        if (decoded.exp < currentTime) {
+          localStorage.removeItem("token");
+          setToken("");
+        } else {
+          setToken(storedToken);
+        }
+      } catch (error) {
+        localStorage.removeItem("token");
+        setToken("");
+      }
+    }
+
+    setIsLoading(false);
+  }, []);
+
+  useEffect(() => {
     const fetchUser = async () => {
-      const res = await axiosInstance.get("/user/profile");
-      console.log(res.data);
-      setUserName(res.data.name);
+      if (!token) return;
+      try {
+        const res = await axiosInstance.get("/user/profile");
+        setUserName(res.data.name);
+      } catch (err) {
+        console.error("Failed to fetch user profile", err);
+        localStorage.removeItem("token");
+        setToken("");
+      }
     };
     fetchUser();
   }, [token]);
-
-  useEffect(() => {
-    const storedToken = localStorage.getItem("token");
-    console.log(storedToken);
-    if (storedToken) {
-      setToken(storedToken);
-      //   axiosInstance.defaults.headers.common[
-      //     "Authorization"
-      //   ] = `Bearer ${storedToken}`;
-    }
-    //console.log(user);
-    setIsLoading(false);
-  }, []);
 
   if (isLoading) {
     return <div>Loading...</div>;
