@@ -10,7 +10,7 @@ export const ThemeProvider = ({ children }) => {
   };
 
   useEffect(() => {
-    console.log(theme);
+    //console.log(theme);
     if (theme === "dark") document.documentElement.classList.add("dark");
     else document.documentElement.classList.remove("dark");
   }, [theme]);
