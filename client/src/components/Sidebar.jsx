@@ -51,7 +51,7 @@ export const Sidebar = ({ collapsed, toggleSidebar }) => {
             {!collapsed && <span>Tasks</span>}
           </NavLink>
           <NavLink
-            to="/dashboard/focus"
+            to="/dashboard/focus-session"
             className={({ isActive }) =>
               `${linkClass} ${isActive ? "bg-gray-700" : ""}`
             }
