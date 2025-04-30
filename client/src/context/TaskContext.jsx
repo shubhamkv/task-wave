@@ -26,7 +26,7 @@ export const TaskProvider = ({ children }) => {
   const fetchTasks = async (filters = {}) => {
     try {
       const res = await axiosInstance.get("/tasks", { params: filters });
-      console.log(res.data);
+      //console.log(res.data);
       setTasks(res.data.tasks);
     } catch (e) {
       console.log("Error in fetching tasks", e);
