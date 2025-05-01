@@ -117,4 +117,49 @@ router.get("/profile", authMiddleware, async (req, res) => {
   }
 });
 
+const updateBody = zod.object({
+  password: zod
+    .string()
+    .min(6, { msg: "Password must be at least of length 6" })
+    .trim()
+    .optional(),
+  name: zod.string().optional(),
+  focusStreak: zod.number().int().nonnegative().optional(),
+});
+
+router.put("/profile", authMiddleware, async (req, res) => {
+  const validationInput = updateBody.safeParse(req.body);
+  if (!validationInput.success) {
+    return res.status(400).json({
+      msg: "Invalid Inputs",
+    });
+  }
+
+  const userId = req.userId;
+
+  try {
+    const updatedUser = await User.findOneAndUpdate(
+      { _id: userId },
+      validationInput.data,
+      { new: true }
+    );
+
+    if (!updatedUser) {
+      return res.status(404).json({
+        msg: "User not found",
+      });
+    }
+
+    res.json({
+      msg: "User profile updated",
+      updatedUser,
+    });
+  } catch (error) {
+    console.log("Error message: ", error);
+    res.status(500).json({
+      msg: "Something went wrong.. see console",
+    });
+  }
+});
+
 module.exports = router;
