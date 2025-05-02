@@ -9,6 +9,7 @@ const sessionInput = zod.object({
   taskName: zod.string().min(1),
   taskId: zod.string().optional(),
   duration: zod.number().int().positive().min(5, "Minimum 5 minutes required"),
+  status: zod.enum(["Success", "Interrupted"]).optional(),
   startedAt: zod
     .preprocess(
       (arg) => {
@@ -93,6 +94,25 @@ const sessionInput = zod.object({
     ),
 });
 
+router.get("/", authMiddleware, async (req, res) => {
+  const userId = req.userId;
+
+  try {
+    const sessions = await FocusSession.find({ userId: userId });
+    if (!sessions) {
+      return res.status(404).json({
+        msg: "Focus Session not found !!",
+      });
+    }
+    res.json(sessions);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      msg: "Something went wrong...",
+    });
+  }
+});
+
 router.post("/", authMiddleware, async (req, res) => {
   const validationResult = sessionInput.safeParse(req.body);
   if (!validationResult.success) {
@@ -124,6 +144,63 @@ router.post("/", authMiddleware, async (req, res) => {
     console.log(e);
     res.status(500).json({
       msg: "Error in creating session..",
+    });
+  }
+});
+
+router.put("/:id", authMiddleware, async (req, res) => {
+  const inputValidation = sessionInput.partial().safeParse(req.body);
+  if (!inputValidation.success) {
+    return res.status(400).json({
+      error: inputValidation.error.errors,
+      msg: "Invalid Inputs!!",
+    });
+  }
+
+  try {
+    const updateSession = await FocusSession.findOneAndUpdate(
+      { _id: req.params.id },
+      inputValidation.data,
+      { new: true }
+    );
+
+    if (!updateSession) {
+      return res.status(404).json({
+        msg: "Session not found!",
+      });
+    }
+
+    res.json({
+      msg: "Session updated",
+      updatedSession: updateSession,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      msg: "Something went wrong!",
+    });
+  }
+});
+
+router.delete("/:id", authMiddleware, async (req, res) => {
+  try {
+    const deleteSession = await FocusSession.findOneAndDelete({
+      _id: req.params.id,
+    });
+    if (!deleteSession) {
+      return res.status(404).json({
+        msg: "Session not found!",
+      });
+    }
+
+    res.json({
+      msg: "Session deleted successfully !!",
+      deletedSession: deleteSession,
+    });
+  } catch (error) {
+    console.log(e);
+    res.status(500).json({
+      msg: "Something went wrong!",
     });
   }
 });
