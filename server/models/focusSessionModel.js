@@ -19,7 +19,11 @@ const focusSessionSchema = new mongoose.Schema({
   createdAt: { type: Date, default: Date.now() },
   startedAt: { type: Date, required: true },
   endedAt: { type: Date, required: true },
-  completed: { type: Boolean, default: true },
+  status: {
+    type: String,
+    enum: ["Success", "Interrupted"],
+    default: "Success",
+  },
 });
 
 const FocusSession = mongoose.model("FocusSession", focusSessionSchema);
