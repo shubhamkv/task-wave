@@ -12,12 +12,13 @@ export const Timer = () => {
   const [timeLeft, setTimeLeft] = useState(25 * 60); // in seconds
   const [isRunning, setIsRunning] = useState(false);
   const [intervalId, setIntervalId] = useState(null);
-  const { taskName, selectedTaskId } = useSessionContext();
+  const { taskName, selectedTaskId, fetchSessions } = useSessionContext();
   const [startButton, setStartButton] = useState(true);
   const [progress, setProgress] = useState(0);
   const [duration, setDuration] = useState(25 * 60);
   const [focusStreak, setFocusStreak] = useState(false);
   const [streakCount, setStreakCount] = useState(0);
+  const [currentSesssionId, setCurrentSessionId] = useState("");
 
   useEffect(() => {
     if (isRunning) {
@@ -50,6 +51,7 @@ export const Timer = () => {
           });
           toast.success("Congrats! You have maintain the focus");
           setStreakCount(count);
+          fetchSessions(); // api call to fetch session history
         } catch (error) {
           console.log(error);
           toast.error(error.response?.data?.msg || "Failed to update streak");
@@ -72,6 +74,14 @@ export const Timer = () => {
     };
     getStreakCount();
   }, [streakCount]);
+
+  const setInterruptedStatus = async () => {
+    await axiosInstance.put(`/focus-session/${currentSesssionId}`, {
+      status: "Interrupted",
+    });
+    fetchSessions(); //api call to fetch history
+    toast.error("Oops! you are failed to stay focus");
+  };
 
   const handleEndChange = (e) => {
     const value = new Date(e.target.value);
@@ -105,7 +115,7 @@ export const Timer = () => {
       // console.log(selectedTaskId);
 
       try {
-        await axiosInstance.post("/focus-session", {
+        const res = await axiosInstance.post("/focus-session", {
           taskName,
           taskId: selectedTaskId,
           startedAt: actualStartTime,
@@ -113,7 +123,8 @@ export const Timer = () => {
           duration: Math.floor(durationInSeconds / 60),
         });
         toast.success("Session created successfully");
-
+        //console.log(res.data.createdSession._id);
+        setCurrentSessionId(res.data.createdSession._id);
         setStartTime(actualStartTime);
         setEndTime(actualEndTime);
         setDuration(durationInSeconds);
@@ -133,7 +144,9 @@ export const Timer = () => {
   const handlePause = () => {
     setIsRunning(false);
     clearInterval(intervalId);
-    if (focusStreak) toast.error("Oops! you are failed to stay focus");
+    if (focusStreak && currentSesssionId) {
+      setInterruptedStatus();
+    }
     setFocusStreak(false);
   };
 
@@ -146,6 +159,9 @@ export const Timer = () => {
     setTimeLeft(25 * 60);
     setStartButton(true);
     setProgress(0);
+    if (focusStreak && currentSesssionId) {
+      setInterruptedStatus();
+    }
     setFocusStreak(false);
   };
 
