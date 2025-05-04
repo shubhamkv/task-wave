@@ -49,6 +49,9 @@ export const Timer = () => {
           await axiosInstance.put("/user/profile", {
             focusStreak: count,
           });
+          await axiosInstance.put(`/focus-session/${currentSesssionId}`, {
+            status: "Success",
+          });
           toast.success("Congrats! You have maintain the focus");
           setStreakCount(count);
           fetchSessions(); // api call to fetch session history
@@ -74,14 +77,6 @@ export const Timer = () => {
     };
     getStreakCount();
   }, [streakCount]);
-
-  const setInterruptedStatus = async () => {
-    await axiosInstance.put(`/focus-session/${currentSesssionId}`, {
-      status: "Interrupted",
-    });
-    fetchSessions(); //api call to fetch history
-    toast.error("Oops! you are failed to stay focus");
-  };
 
   const handleEndChange = (e) => {
     const value = new Date(e.target.value);
@@ -144,8 +139,9 @@ export const Timer = () => {
   const handlePause = () => {
     setIsRunning(false);
     clearInterval(intervalId);
-    if (focusStreak && currentSesssionId) {
-      setInterruptedStatus();
+    if (focusStreak) {
+      fetchSessions();
+      toast.error("Oops! you are failed to stay focus");
     }
     setFocusStreak(false);
   };
@@ -159,8 +155,9 @@ export const Timer = () => {
     setTimeLeft(25 * 60);
     setStartButton(true);
     setProgress(0);
-    if (focusStreak && currentSesssionId) {
-      setInterruptedStatus();
+    if (focusStreak) {
+      fetchSessions();
+      toast.error("Oops! you are failed to stay focus");
     }
     setFocusStreak(false);
   };
