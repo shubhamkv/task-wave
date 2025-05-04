@@ -22,7 +22,7 @@ const focusSessionSchema = new mongoose.Schema({
   status: {
     type: String,
     enum: ["Success", "Interrupted"],
-    default: "Success",
+    default: "Interrupted",
   },
 });
 
