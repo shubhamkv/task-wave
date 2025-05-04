@@ -137,6 +137,12 @@ router.put("/profile", authMiddleware, async (req, res) => {
 
   const userId = req.userId;
 
+  if (req.body.newPassword) {
+    const inputPassword = req.body.newPassword;
+    const hashedPassword = await bcrypt.hash(inputPassword, 10);
+    validationInput.data.password = hashedPassword;
+  }
+
   try {
     const updatedUser = await User.findOneAndUpdate(
       { _id: userId },
