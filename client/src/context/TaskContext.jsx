@@ -1,9 +1,11 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { axiosInstance } from "../utils/axiosInstance";
+import { useAuthContext } from "./AuthContext";
 
 const TaskContext = createContext();
 
 export const TaskProvider = ({ children }) => {
+  const { isAuthReady } = useAuthContext(); // check user is authenticated before fetching tasks
   const [tasks, setTasks] = useState([]);
   const [editTask, setEditTask] = useState(null);
   const [stats, setStats] = useState({
@@ -34,7 +36,7 @@ export const TaskProvider = ({ children }) => {
   };
 
   useEffect(() => {
-    fetchTasks(filters);
+    if (isAuthReady) fetchTasks(filters);
   }, [filters]);
 
   return (
