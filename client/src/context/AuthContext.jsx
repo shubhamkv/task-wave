@@ -6,7 +6,7 @@ const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [token, setToken] = useState("");
-  const [isLoading, setIsLoading] = useState(true);
+  const [isAuthReady, setIsAuthReady] = useState(false);
   const [userName, setUserName] = useState("");
 
   useEffect(() => {
@@ -29,7 +29,7 @@ export const AuthProvider = ({ children }) => {
       }
     }
 
-    setIsLoading(false);
+    setIsAuthReady(true);
   }, []);
 
   useEffect(() => {
@@ -47,12 +47,8 @@ export const AuthProvider = ({ children }) => {
     fetchUser();
   }, [token]);
 
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
-
   return (
-    <AuthContext.Provider value={{ token, setToken, userName }}>
+    <AuthContext.Provider value={{ token, setToken, userName, isAuthReady }}>
       {children}
     </AuthContext.Provider>
   );
