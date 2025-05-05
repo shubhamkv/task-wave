@@ -10,6 +10,10 @@ import { ProtectedRoute } from "./components/ProtectedRoute";
 import { AuthProvider } from "./context/AuthContext";
 import { ThemeProvider } from "./context/ThemeContext";
 import { FocusSession } from "./pages/FocusSession";
+import { Profile } from "./pages/Profile";
+import { Home } from "./pages/Home";
+import { FeaturesPage } from "./pages/FeaturesPage";
+import { PublicRoute } from "./components/PublicRoute";
 
 function App() {
   return (
@@ -19,8 +23,25 @@ function App() {
           <TaskProvider>
             <BrowserRouter>
               <Routes>
-                <Route path="/signup" element={<SignUp />} />
-                <Route path="/signin" element={<SignIn />} />
+                <Route path="/" element={<Home />} />
+                <Route path="/home" element={<Home />} />
+                <Route path="/features" element={<FeaturesPage />} />
+                <Route
+                  path="/signup"
+                  element={
+                    <PublicRoute>
+                      <SignUp />
+                    </PublicRoute>
+                  }
+                />
+                <Route
+                  path="/signin"
+                  element={
+                    <PublicRoute>
+                      <SignIn />
+                    </PublicRoute>
+                  }
+                />
                 <Route
                   path="/dashboard"
                   element={
@@ -32,6 +53,7 @@ function App() {
                   <Route index element={<Tasks />} />
                   <Route path="tasks" element={<Tasks />} />
                   <Route path="focus-session" element={<FocusSession />} />
+                  <Route path="profile" element={<Profile />} />
                 </Route>
               </Routes>
             </BrowserRouter>
