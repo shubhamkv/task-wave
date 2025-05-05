@@ -34,7 +34,12 @@ export const Sidebar = ({ collapsed, toggleSidebar }) => {
       <div>
         <div className="flex items-center justify-between p-4">
           {!collapsed && (
-            <h1 className="text-2xl font-bold text-center">TaskWave</h1>
+            <NavLink
+              to="/"
+              className="text-2xl font-bold text-center text-indigo-500"
+            >
+              TaskWave
+            </NavLink>
           )}
           <button onClick={toggleSidebar}>
             <FaBars className="text-xl" />
