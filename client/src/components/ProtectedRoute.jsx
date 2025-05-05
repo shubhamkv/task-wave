@@ -1,10 +1,13 @@
 import { useAuthContext } from "../context/AuthContext";
 import { Navigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
+import { Spinner } from "./Spinner";
 
 export const ProtectedRoute = ({ children }) => {
-  const { token } = useAuthContext();
+  const { token, isAuthReady } = useAuthContext();
   // console.log(token);
+  if (!isAuthReady) return <Spinner />;
+
   if (!token) {
     return <Navigate to="/signin" replace />;
   }
