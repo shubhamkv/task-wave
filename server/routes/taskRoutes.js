@@ -39,10 +39,53 @@ const taskInput = zod.object({
         return taskDate >= todayDate;
       },
       {
-        msg: "dueDate must be today or in the future",
+        message: "dueDate must be today or in the future",
       }
     ),
 });
+
+/**
+ * @swagger
+ * /tasks:
+ *   get:
+ *     summary: Get tasks
+ *     description: Get all user's tasks with optional filters
+ *     tags: [Tasks]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: status
+ *         schema:
+ *           type: string
+ *           enum: [completed, pending, missed]
+ *       - in: query
+ *         name: priority
+ *         schema:
+ *           type: string
+ *           enum: [low, medium, high]
+ *       - in: query
+ *         name: createdAt
+ *         schema:
+ *           type: string
+ *           format: date
+ *       - in: query
+ *         name: dueDate
+ *         schema:
+ *           type: string
+ *           format: date
+ *     responses:
+ *       200:
+ *         description: List of tasks
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Tasks'
+ *       500:
+ *         description: Error while fetching your tasks
+ */
 
 router.get("/", authMiddleware, async (req, res) => {
   try {
@@ -94,6 +137,22 @@ router.get("/", authMiddleware, async (req, res) => {
   }
 });
 
+/**
+ * @swagger
+ * /tasks/stats:
+ *   get:
+ *     summary: Get tasks stats
+ *     description: Get all the statistics of user's tasks
+ *     tags: [Tasks]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Task stats
+ *       500:
+ *         description: Failed to fetch task stats
+ */
+
 router.get("/stats", authMiddleware, async (req, res) => {
   try {
     const userId = req.userId;
@@ -135,6 +194,50 @@ router.get("/stats", authMiddleware, async (req, res) => {
   }
 });
 
+/**
+ * @swagger
+ * /tasks:
+ *   post:
+ *     summary: Create task
+ *     description: Create a new task for authenticated user
+ *     tags: [Tasks]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [title, description, priority, dueDate]
+ *             properties:
+ *               title:
+ *                 type: string
+ *                 minLength: 1
+ *               description:
+ *                 type: string
+ *                 minLength: 1
+ *               priority:
+ *                 type: string
+ *                 enum: [low, medium, high]
+ *               dueDate:
+ *                 type: string
+ *                 format: date
+ *     responses:
+ *       201:
+ *         description: New task created
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Tasks'
+ *       400:
+ *         description: Invalid inputs
+ *       500:
+ *         description: Error in creating task
+ */
+
 router.post("/", authMiddleware, async (req, res) => {
   const result = taskInput.safeParse(req.body);
   //console.log(result.error);
@@ -166,6 +269,57 @@ router.post("/", authMiddleware, async (req, res) => {
   }
 });
 
+/**
+ * @swagger
+ * /tasks/{id}:
+ *   put:
+ *     summary: Update task
+ *     description: Update existing task of authenticated user
+ *     tags: [Tasks]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               title:
+ *                 type: string
+ *               description:
+ *                 type: string
+ *               priority:
+ *                 type: string
+ *                 enum: [low, medium, high]
+ *               dueDate:
+ *                 type: string
+ *                 format: date
+ *               completed:
+ *                 type: boolean
+ *     responses:
+ *       200:
+ *         description: Task updated
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Tasks'
+ *       400:
+ *         description: Invalid inputs
+ *       404:
+ *         description: Task not found
+ *       500:
+ *         description: Internal server error
+ */
+
 router.put("/:id", authMiddleware, async (req, res) => {
   const result = taskInput.partial().safeParse(req.body);
   if (!result.success) {
@@ -178,7 +332,7 @@ router.put("/:id", authMiddleware, async (req, res) => {
 
   try {
     const updateTask = await Task.findOneAndUpdate(
-      { _id: taskId },
+      { _id: taskId, userId: req.userId },
       result.data,
       { new: true }
     );
@@ -202,10 +356,41 @@ router.put("/:id", authMiddleware, async (req, res) => {
   }
 });
 
+/**
+ * @swagger
+ * /tasks/{id}:
+ *   delete:
+ *     summary: Delete task
+ *     description: Delete existing task of authenticated user
+ *     tags: [Tasks]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Task deleted successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Tasks'
+ *       404:
+ *         description: Task not found
+ *       500:
+ *         description: Internal server error
+ */
+
 router.delete("/:id", authMiddleware, async (req, res) => {
   try {
     const deleteTask = await Task.findOneAndDelete({
       _id: req.params.id,
+      userId: req.userId,
     });
 
     //console.log(deleteTask);

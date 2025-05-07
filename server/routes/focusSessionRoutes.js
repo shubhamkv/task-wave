@@ -89,10 +89,34 @@ const sessionInput = zod.object({
         return endDate >= todayDate;
       },
       {
-        msg: "endDate must be today or in the future",
+        message: "endDate must be today or in the future",
       }
     ),
 });
+
+/**
+ * @swagger
+ * /focus-session:
+ *   get:
+ *     summary: Get focus sessions
+ *     description: Get all focus sessions for the authenticated user
+ *     tags: [Focus Session]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: List of focus sessions
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/FocusSession'
+ *       404:
+ *         description: No sessions found
+ *       500:
+ *         description: Internal server error
+ */
 
 router.get("/", authMiddleware, async (req, res) => {
   const userId = req.userId;
@@ -112,6 +136,55 @@ router.get("/", authMiddleware, async (req, res) => {
     });
   }
 });
+
+/**
+ * @swagger
+ * /focus-session:
+ *   post:
+ *     summary: Create a new focus session
+ *     description: Create a new session for authenticated user
+ *     tags: [Focus Session]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               taskId:
+ *                 type: string
+ *               taskName:
+ *                 type: string
+ *               duration:
+ *                 type: integer
+ *                 minimum: 5
+ *               startedAt:
+ *                 type: string
+ *                 format: date
+ *               endedAt:
+ *                 type: string
+ *                 format: date
+ *             required:
+ *               - taskName
+ *               - duration
+ *               - startedAt
+ *               - endedAt
+ *     responses:
+ *       201:
+ *         description: Focus session created successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/FocusSession'
+ *       400:
+ *         description: Invalid input
+ *       500:
+ *         description: Server error
+ */
 
 router.post("/", authMiddleware, async (req, res) => {
   const validationResult = sessionInput.safeParse(req.body);
@@ -148,6 +221,49 @@ router.post("/", authMiddleware, async (req, res) => {
   }
 });
 
+/**
+ * @swagger
+ * /focus-session/{id}:
+ *   put:
+ *     summary: Update a focus session
+ *     description: Update an existing focus session of user
+ *     tags: [Focus Session]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: The ID of the session to update
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               status:
+ *                 type: string
+ *                 enum: [Success, Interrupted]
+ *     responses:
+ *       200:
+ *         description: Session updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/FocusSession'
+ *       400:
+ *         description: Invalid input
+ *       404:
+ *         description: Session not found
+ *       500:
+ *         description: Server error
+ */
+
 router.put("/:id", authMiddleware, async (req, res) => {
   const inputValidation = sessionInput.partial().safeParse(req.body);
   if (!inputValidation.success) {
@@ -181,6 +297,37 @@ router.put("/:id", authMiddleware, async (req, res) => {
     });
   }
 });
+
+/**
+ * @swagger
+ * /focus-session/{id}:
+ *   delete:
+ *     summary: Delete a focus session
+ *     description: Delete an existing focus session of user
+ *     tags: [Focus Session]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: The ID of the session to delete
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Session deleted successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/FocusSession'
+ *       404:
+ *         description: Session not found
+ *       500:
+ *         description: Server error
+ */
 
 router.delete("/:id", authMiddleware, async (req, res) => {
   try {

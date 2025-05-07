@@ -9,6 +9,36 @@ const router = express.Router();
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
+/**
+ * @swagger
+ * /otp/send:
+ *   post:
+ *     summary: Send OTP
+ *     description: Send OTP to user's email
+ *     tags: [OTP]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - username
+ *             properties:
+ *               username:
+ *                 type: string
+ *                 format: email
+ *     responses:
+ *       200:
+ *         description: OTP sent successfully
+ *       400:
+ *         description: Failed to send OTP
+ *       500:
+ *         description: Internal server error
+ */
+
 router.post("/send", authMiddleware, async (req, res) => {
   const { username } = req.body;
   const otp = generateOTP();
@@ -41,6 +71,39 @@ router.post("/send", authMiddleware, async (req, res) => {
     });
   }
 });
+
+/**
+ * @swagger
+ * /otp/verify:
+ *   post:
+ *     summary: Verify OTP
+ *     description: Verify OTP sent to user's email
+ *     tags: [OTP]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               username:
+ *                 type: string
+ *                 format: email
+ *               otp:
+ *                 type: string
+ *             required:
+ *               - username
+ *               - otp
+ *     responses:
+ *       200:
+ *         description: OTP verified successfully
+ *       400:
+ *         description: Invalid or expired OTP
+ *       500:
+ *         description: Failed to verify OTP
+ */
 
 router.post("/verify", authMiddleware, async (req, res) => {
   const { username, otp } = req.body;

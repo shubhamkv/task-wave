@@ -9,6 +9,44 @@ const authMiddleware = require("../middleware/authMiddleware");
 
 require("dotenv").config();
 
+/**
+ * @swagger
+ * /user/signup:
+ *   post:
+ *    summary: Register a new user
+ *    description: SignUp / Register a new user on app
+ *    tags: [User]
+ *    security: []
+ *    requestBody:
+ *      required: true
+ *      content:
+ *        application/json:
+ *         schema:
+ *          type: object
+ *          required:
+ *            - username
+ *            - password
+ *            - name
+ *          properties:
+ *            username:
+ *              type: string
+ *              format: email
+ *            password:
+ *              type: string
+ *              minLength: 6
+ *            name:
+ *              type: string
+ *    responses:
+ *      201:
+ *        description: Successfully registered
+ *      400:
+ *        description: Validation failed
+ *      409:
+ *        description: User already exists
+ *      500:
+ *        description: Internal server error
+ */
+
 const signupBody = zod.object({
   username: zod.string().email().trim(),
   password: zod
@@ -56,6 +94,37 @@ router.post("/signup", async (req, res) => {
   }
 });
 
+/**
+ * @swagger
+ * /user/signin:
+ *   post:
+ *    summary: Login existing user
+ *    description: Login the user with their existing credentials
+ *    tags: [User]
+ *    security: []
+ *    requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *            schema:
+ *              type: object
+ *              required: [username, password]
+ *              properties:
+ *                username:
+ *                  type: string
+ *                  format: email
+ *                password:
+ *                  type: string
+ *                  minLength: 6
+ *    responses:
+ *      200:
+ *        description: Successfully logged in
+ *      400:
+ *        description: Invalid inputs / credentials
+ *      500:
+ *        description: Internal server error
+ */
+
 const signinBody = zod.object({
   username: zod.string().email().trim(),
   password: zod
@@ -99,6 +168,30 @@ router.post("/signin", async (req, res) => {
   }
 });
 
+/**
+ * @swagger
+ * /user/profile:
+ *   get:
+ *     summary: Get user profile
+ *     description: Get the profile of authenticated user
+ *     tags: [User]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: User profile data
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/User'
+ *       404:
+ *         description: User not found
+ *       500:
+ *         description: Internal server error
+ */
+
 router.get("/profile", authMiddleware, async (req, res) => {
   const userId = req.userId;
   try {
@@ -116,6 +209,47 @@ router.get("/profile", authMiddleware, async (req, res) => {
     });
   }
 });
+
+/**
+ * @swagger
+ * /user/profile:
+ *   put:
+ *     summary: Update user profile
+ *     description: Update the profile of authenticated user
+ *     tags: [User]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               password:
+ *                 type: string
+ *                 minLength: 6
+ *                 description: Password must be at least 6 characters long.
+ *               name:
+ *                 type: string
+ *               focusStreak:
+ *                 type: integer
+ *                 minimum: 0
+ *     responses:
+ *       200:
+ *         description: Profile updated
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/User'
+ *       400:
+ *         description: Invalid inputs
+ *       404:
+ *         description: User not found
+ *       500:
+ *         description: Server error
+ */
 
 const updateBody = zod.object({
   password: zod
