@@ -10,7 +10,7 @@ export const TaskFilter = () => {
   };
 
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-2xl shadow p-4 mb-6">
+    <div className="bg-slate-200 dark:bg-slate-800 rounded-2xl shadow p-4 mb-6 ml-4">
       <div className="flex justify-between items-center mb-4 mt-4">
         <h2 className="text-lg font-semibold mb-4 text-gray-800 dark:text-gray-200">
           Filter Tasks
@@ -26,12 +26,20 @@ export const TaskFilter = () => {
             name="status"
             value={filters.status}
             onChange={handleChange}
-            className="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            className="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:text-white"
           >
-            <option value="">All</option>
-            <option value="completed">Completed</option>
-            <option value="pending">Pending</option>
-            <option value="missed">Missed</option>
+            <option value="" className="dark:text-gray-900">
+              All
+            </option>
+            <option value="completed" className="dark:text-gray-900">
+              Completed
+            </option>
+            <option value="pending" className="dark:text-gray-900">
+              Pending
+            </option>
+            <option value="missed" className="dark:text-gray-900">
+              Missed
+            </option>
           </select>
         </div>
 
@@ -43,12 +51,20 @@ export const TaskFilter = () => {
             name="priority"
             value={filters.priority}
             onChange={handleChange}
-            className="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            className="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:text-white"
           >
-            <option value="">All</option>
-            <option value="high">High</option>
-            <option value="medium">Medium</option>
-            <option value="low">Low</option>
+            <option value="" className="dark:text-gray-900">
+              All
+            </option>
+            <option value="high" className="dark:text-gray-900">
+              High
+            </option>
+            <option value="medium" className="dark:text-gray-900">
+              Medium
+            </option>
+            <option value="low" className="dark:text-gray-900">
+              Low
+            </option>
           </select>
         </div>
 
@@ -61,7 +77,7 @@ export const TaskFilter = () => {
             name="createdAt"
             value={filters.createdAt}
             onChange={handleChange}
-            className="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            className="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:text-white"
           />
         </div>
 
@@ -74,7 +90,7 @@ export const TaskFilter = () => {
             name="dueDate"
             value={filters.dueDate}
             onChange={handleChange}
-            className="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            className="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:text-white"
           />
         </div>
       </div>

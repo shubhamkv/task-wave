@@ -54,15 +54,15 @@ export const AddTask = () => {
   };
 
   return (
-    <div className="bg-white dark:bg-gray-800 shadow p-6 rounded-2xl mb-6">
+    <div className="bg-slate-200 dark:bg-slate-800 shadow p-4 rounded-2xl mb-6 ml-4">
       <div className="flex justify-between items-center mb-4">
         <h3 className="text-2xl font-semibold mb-6 text-gray-800 dark:text-white">
-          {isEditing ? "Update Task" : "📝 Add New Task"}
+          {isEditing ? "Update Task" : "Add New Task"}
         </h3>
         {!isEditing && (
           <button
             onClick={() => setShowForm(!showForm)}
-            className="bg-indigo-600 text-white px-4 py-1 rounded hover:bg-indigo-700 transition"
+            className="bg-indigo-600 text-white px-4 py-1 h-12 cursor-pointer rounded-xl hover:bg-indigo-700 transition"
           >
             {/* {console.log(showForm)} */}
             {showForm ? "Hide" : "Add Task"}
@@ -71,7 +71,10 @@ export const AddTask = () => {
       </div>
 
       {(showForm || isEditing) && (
-        <form onSubmit={handleSubmit} className="grid gap-6 md:grid-cols-2">
+        <form
+          onSubmit={handleSubmit}
+          className="grid gap-6 md:grid-cols-2 dark:text-white"
+        >
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               Title
@@ -98,10 +101,18 @@ export const AddTask = () => {
               required
               className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none"
             >
-              <option value="select">Select</option>
-              <option value="high">High</option>
-              <option value="medium">Medium</option>
-              <option value="low">Low</option>
+              <option value="" className="dark:text-gray-900">
+                Select
+              </option>
+              <option value="high" className="dark:text-gray-900">
+                High
+              </option>
+              <option value="medium" className="dark:text-gray-900">
+                Medium
+              </option>
+              <option value="low" className="dark:text-gray-900">
+                Low
+              </option>
             </select>
           </div>
 
