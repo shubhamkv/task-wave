@@ -1,0 +1,653 @@
+openapi: 3.0.0
+info:
+  title: Task Wave API
+  version: 1.0.0
+  description: The API collection for Task Wave
+servers:
+  - url: http://localhost:3000/api
+    description: Task Wave Development Server
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    User:
+      type: object
+      properties:
+        _id:
+          type: string
+          description: Unique identifier for the user (MongoDB ObjectId)
+          example: 660b2cbfcd85c4b3e0d2a123
+        username:
+          type: string
+          format: email
+          description: User's email address (used as username)
+          example: johndoe@gmail.com
+        password:
+          type: string
+          description: User's hashed password
+          example: $2b$10$1b2c3d4e5f6g7h8i9j0klmnopqrstuvwx
+        name:
+          type: string
+          description: Full name of the user
+          example: John Doe
+        focusStreak:
+          type: integer
+          description: Current focus streak of the user
+          example: 5
+          default: 0
+      required:
+        - username
+        - password
+        - name
+    Tasks:
+      type: object
+      properties:
+        _id:
+          type: string
+          description: Unique identifier for the task (MongoDB ObjectId)
+          example: 66397f4c152f5e001e4d5e42
+        userId:
+          type: string
+          description: Reference to the User who owns this task
+          example: 662afcd7f8b3b7bdf2e9d5a1
+        title:
+          type: string
+          description: Title of the task
+          example: Finish React assignment
+        description:
+          type: string
+          description: Detailed description of the task
+          example: Complete the frontend task dashboard with filtering
+        dueDate:
+          type: string
+          format: date-time
+          description: Deadline for the task
+          example: '2025-05-10T18:00:00Z'
+        priority:
+          type: string
+          enum:
+            - low
+            - medium
+            - high
+          description: Priority level of the task
+          example: high
+        createdAt:
+          type: string
+          format: date-time
+          description: Task creation timestamp
+          example: '2025-05-06T12:30:00Z'
+        completed:
+          type: boolean
+          description: Completion status of the task
+          example: false
+      required:
+        - title
+        - description
+        - dueDate
+    FocusSession:
+      type: object
+      properties:
+        _id:
+          type: string
+          description: Unique identifier for the focus session
+          example: 66404edabf3c5f001e6f8c91
+        userId:
+          type: string
+          description: Reference to the User
+          example: 660b2cbfcd85c4b3e0d2a123
+        taskId:
+          type: string
+          nullable: true
+          description: Optional reference to a Task
+          example: 66397f4c152f5e001e4d5e42
+        taskName:
+          type: string
+          description: Name of the task (for display, even if taskId is not provided)
+          example: Write blog article
+        duration:
+          type: integer
+          description: Duration of the session in minutes
+          minLength: 5
+          example: 25
+        createdAt:
+          type: string
+          format: date-time
+          description: Timestamp when the session was created
+          example: '2025-05-06T10:00:00Z'
+        startedAt:
+          type: string
+          format: date-time
+          description: Session start time
+          example: '2025-05-06T10:05:00Z'
+        endedAt:
+          type: string
+          format: date-time
+          description: Session end time
+          example: '2025-05-06T10:30:00Z'
+        status:
+          type: string
+          enum:
+            - Success
+            - Interrupted
+          description: Status of the focus session
+          example: Success
+      required:
+        - userId
+        - taskName
+        - duration
+        - startedAt
+        - endedAt
+tags:
+  - name: User
+    description: User management and authentication API
+  - name: Tasks
+    description: Tasks management API
+  - name: Focus Session
+    description: API for managing focus sessions
+  - name: OTP
+    description: API for handling OTP service
+security:
+  - bearerAuth: []
+paths:
+  /focus-session:
+    get:
+      summary: Get focus sessions
+      description: Get all focus sessions for the authenticated user
+      tags:
+        - Focus Session
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: List of focus sessions
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/FocusSession'
+        '404':
+          description: No sessions found
+        '500':
+          description: Internal server error
+    post:
+      summary: Create a new focus session
+      description: Create a new session for authenticated user
+      tags:
+        - Focus Session
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                taskId:
+                  type: string
+                taskName:
+                  type: string
+                duration:
+                  type: integer
+                  minimum: 5
+                startedAt:
+                  type: string
+                  format: date
+                endedAt:
+                  type: string
+                  format: date
+              required:
+                - taskName
+                - duration
+                - startedAt
+                - endedAt
+      responses:
+        '201':
+          description: Focus session created successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/FocusSession'
+        '400':
+          description: Invalid input
+        '500':
+          description: Server error
+  /focus-session/{id}:
+    put:
+      summary: Update a focus session
+      description: Update an existing focus session of user
+      tags:
+        - Focus Session
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: The ID of the session to update
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                status:
+                  type: string
+                  enum:
+                    - Success
+                    - Interrupted
+      responses:
+        '200':
+          description: Session updated successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/FocusSession'
+        '400':
+          description: Invalid input
+        '404':
+          description: Session not found
+        '500':
+          description: Server error
+    delete:
+      summary: Delete a focus session
+      description: Delete an existing focus session of user
+      tags:
+        - Focus Session
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          description: The ID of the session to delete
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Session deleted successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/FocusSession'
+        '404':
+          description: Session not found
+        '500':
+          description: Server error
+  /otp/send:
+    post:
+      summary: Send OTP
+      description: Send OTP to user's email
+      tags:
+        - OTP
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - username
+              properties:
+                username:
+                  type: string
+                  format: email
+      responses:
+        '200':
+          description: OTP sent successfully
+        '400':
+          description: Failed to send OTP
+        '500':
+          description: Internal server error
+  /otp/verify:
+    post:
+      summary: Verify OTP
+      description: Verify OTP sent to user's email
+      tags:
+        - OTP
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                  format: email
+                otp:
+                  type: string
+              required:
+                - username
+                - otp
+      responses:
+        '200':
+          description: OTP verified successfully
+        '400':
+          description: Invalid or expired OTP
+        '500':
+          description: Failed to verify OTP
+  /tasks:
+    get:
+      summary: Get tasks
+      description: Get all user's tasks with optional filters
+      tags:
+        - Tasks
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: query
+          name: status
+          schema:
+            type: string
+            enum:
+              - completed
+              - pending
+              - missed
+        - in: query
+          name: priority
+          schema:
+            type: string
+            enum:
+              - low
+              - medium
+              - high
+        - in: query
+          name: createdAt
+          schema:
+            type: string
+            format: date
+        - in: query
+          name: dueDate
+          schema:
+            type: string
+            format: date
+      responses:
+        '200':
+          description: List of tasks
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Tasks'
+        '500':
+          description: Error while fetching your tasks
+    post:
+      summary: Create task
+      description: Create a new task for authenticated user
+      tags:
+        - Tasks
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - title
+                - description
+                - priority
+                - dueDate
+              properties:
+                title:
+                  type: string
+                  minLength: 1
+                description:
+                  type: string
+                  minLength: 1
+                priority:
+                  type: string
+                  enum:
+                    - low
+                    - medium
+                    - high
+                dueDate:
+                  type: string
+                  format: date
+      responses:
+        '201':
+          description: New task created
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Tasks'
+        '400':
+          description: Invalid inputs
+        '500':
+          description: Error in creating task
+  /tasks/stats:
+    get:
+      summary: Get tasks stats
+      description: Get all the statistics of user's tasks
+      tags:
+        - Tasks
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Task stats
+        '500':
+          description: Failed to fetch task stats
+  /tasks/{id}:
+    put:
+      summary: Update task
+      description: Update existing task of authenticated user
+      tags:
+        - Tasks
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                description:
+                  type: string
+                priority:
+                  type: string
+                  enum:
+                    - low
+                    - medium
+                    - high
+                dueDate:
+                  type: string
+                  format: date
+                completed:
+                  type: boolean
+      responses:
+        '200':
+          description: Task updated
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Tasks'
+        '400':
+          description: Invalid inputs
+        '404':
+          description: Task not found
+        '500':
+          description: Internal server error
+    delete:
+      summary: Delete task
+      description: Delete existing task of authenticated user
+      tags:
+        - Tasks
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Task deleted successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Tasks'
+        '404':
+          description: Task not found
+        '500':
+          description: Internal server error
+  /user/signup:
+    post:
+      summary: Register a new user
+      description: SignUp / Register a new user on app
+      tags:
+        - User
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - username
+                - password
+                - name
+              properties:
+                username:
+                  type: string
+                  format: email
+                password:
+                  type: string
+                  minLength: 6
+                name:
+                  type: string
+      responses:
+        '201':
+          description: Successfully registered
+        '400':
+          description: Validation failed
+        '409':
+          description: User already exists
+        '500':
+          description: Internal server error
+  /user/signin:
+    post:
+      summary: Login existing user
+      description: Login the user with their existing credentials
+      tags:
+        - User
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - username
+                - password
+              properties:
+                username:
+                  type: string
+                  format: email
+                password:
+                  type: string
+                  minLength: 6
+      responses:
+        '200':
+          description: Successfully logged in
+        '400':
+          description: Invalid inputs / credentials
+        '500':
+          description: Internal server error
+  /user/profile:
+    get:
+      summary: Get user profile
+      description: Get the profile of authenticated user
+      tags:
+        - User
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: User profile data
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+        '404':
+          description: User not found
+        '500':
+          description: Internal server error
+    put:
+      summary: Update user profile
+      description: Update the profile of authenticated user
+      tags:
+        - User
+      security:
+        - bearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                password:
+                  type: string
+                  minLength: 6
+                  description: Password must be at least 6 characters long.
+                name:
+                  type: string
+                focusStreak:
+                  type: integer
+                  minimum: 0
+      responses:
+        '200':
+          description: Profile updated
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+        '400':
+          description: Invalid inputs
+        '404':
+          description: User not found
+        '500':
+          description: Server error
+
