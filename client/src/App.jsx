@@ -14,6 +14,7 @@ import { Profile } from "./pages/Profile";
 import { Home } from "./pages/Home";
 import { FeaturesPage } from "./pages/FeaturesPage";
 import { PublicRoute } from "./components/PublicRoute";
+import { Docs } from "./pages/Docs";
 
 function App() {
   return (
@@ -26,6 +27,7 @@ function App() {
                 <Route path="/" element={<Home />} />
                 <Route path="/home" element={<Home />} />
                 <Route path="/features" element={<FeaturesPage />} />
+                <Route path="/docs" element={<Docs />} />
                 <Route
                   path="/signup"
                   element={
