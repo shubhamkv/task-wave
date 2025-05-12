@@ -164,23 +164,25 @@ export const Timer = () => {
 
   return (
     <>
-      <div className="flex flex-col items-center gap-6 p-4 rounded-md shadow-md bg-card text-card-foreground w-full max-w-xl mx-auto">
+      <div className="flex flex-col items-center dark:bg-slate-800 gap-6 p-4 rounded-2xl shadow-md bg-card text-card-foreground w-full max-w-xl mx-auto">
         {/* Time Selectors */}
         <div className="flex w-full justify-between gap-4">
           <div className="flex flex-col w-1/2">
-            <label className="mb-1 text-sm">Start Time</label>
+            <label className="mb-1 text-sm dark:text-gray-200">
+              Start Time
+            </label>
             <input
               type="datetime-local"
-              className="p-2 rounded-md border bg-background text-foreground"
+              className="p-2 rounded-md border bg-background text-foreground dark:text-white"
               value={format(startTime, "yyyy-MM-dd'T'HH:mm")}
               readOnly
             />
           </div>
           <div className="flex flex-col w-1/2">
-            <label className="mb-1 text-sm">End Time</label>
+            <label className="mb-1 text-sm dark:text-gray-200">End Time</label>
             <input
               type="datetime-local"
-              className="p-2 rounded-md border bg-background text-foreground"
+              className="p-2 rounded-md border bg-background text-foreground dark:text-white"
               value={format(endTime, "yyyy-MM-dd'T'HH:mm")}
               onChange={handleEndChange}
             />
@@ -188,7 +190,7 @@ export const Timer = () => {
         </div>
 
         {/* Timer Display */}
-        <div className="text-6xl font-bold relative flex items-center justify-center w-82 h-82 bg-blue-500 rounded-full shadow-lg tracking-widest">
+        <div className="w-48 sm:w-64 md:w-72 lg:w-80 xl:w-96 aspect-square bg-blue-500 rounded-full shadow-lg flex items-center justify-center text-white font-bold tracking-widest text-4xl sm:text-5xl md:text-6xl">
           {formatTime(timeLeft)}
         </div>
 

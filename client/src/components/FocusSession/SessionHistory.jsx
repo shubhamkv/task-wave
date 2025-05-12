@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { axiosInstance } from "../../utils/axiosInstance";
 import { Trash2 } from "lucide-react";
 import { toast } from "react-toastify";
@@ -41,7 +41,9 @@ export const SessionHistory = () => {
 
   return (
     <div className="p-4 max-w-4xl mx-auto w-full">
-      <h2 className="text-2xl font-semibold mb-4">📜 Session History</h2>
+      <h2 className="text-2xl font-semibold mb-4 dark:text-white">
+        Session History
+      </h2>
 
       <div className="mb-6 flex justify-center">
         <input
@@ -53,7 +55,9 @@ export const SessionHistory = () => {
       </div>
 
       {sessions.length === 0 ? (
-        <p className="text-center">No focus sessions yet.</p>
+        <p className="pt-5 font-medium text-center dark:text-white">
+          No focus sessions today...
+        </p>
       ) : (
         <div className="flex flex-col gap-4">
           {sessions.map((session) => {
@@ -63,28 +67,40 @@ export const SessionHistory = () => {
             return (
               <div
                 key={session._id}
-                className="p-4 bg-card shadow-md rounded-xl text-card-foreground flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2"
+                className="p-4 bg-card dark:bg-slate-800 shadow-md rounded-xl text-card-foreground flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2"
               >
                 <div className="flex flex-col">
-                  <span className="text-sm text-gray-500">Task:</span>
-                  <span className="font-medium">{session.taskName}</span>
+                  <span className="text-sm text-gray-700 dark:text-slate-300">
+                    Task:
+                  </span>
+                  <span className="font-medium dark:text-white">
+                    {session.taskName}
+                  </span>
                 </div>
 
                 <div className="flex flex-col">
-                  <span className="text-sm text-gray-500">Duration:</span>
-                  <span>{session.duration} min</span>
+                  <span className="text-sm text-gray-700 dark:text-gray-300">
+                    Duration:
+                  </span>
+                  <span className="dark:text-white">
+                    {session.duration} min
+                  </span>
                 </div>
 
                 <div className="flex flex-col">
-                  <span className="text-sm text-gray-500">Start:</span>
-                  <span>
+                  <span className="text-sm text-gray-700 dark:text-gray-300">
+                    Start:
+                  </span>
+                  <span className="dark:text-white">
                     {startLocal.hours}:{startLocal.minutes} {startLocal.ampm}
                   </span>
                 </div>
 
                 <div className="flex flex-col">
-                  <span className="text-sm text-gray-500">End:</span>
-                  <span>
+                  <span className="text-sm text-gray-700 dark:text-gray-300">
+                    End:
+                  </span>
+                  <span className="dark:text-white">
                     {endLocal.hours}:{endLocal.minutes} {endLocal.ampm}
                   </span>
                 </div>
@@ -92,8 +108,8 @@ export const SessionHistory = () => {
                 <span
                   className={`px-3 py-1 rounded-full text-sm font-semibold ${
                     session.status === "Success"
-                      ? "bg-green-100 text-green-700"
-                      : "bg-yellow-100 text-yellow-700"
+                      ? "bg-green-500 text-green-900"
+                      : "bg-yellow-500 text-yellow-900"
                   }`}
                 >
                   {session.status}

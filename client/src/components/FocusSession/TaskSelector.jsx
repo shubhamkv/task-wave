@@ -56,32 +56,27 @@ export const TaskSelector = () => {
       <select
         value={selectedTaskId}
         onChange={handleDropdownChange}
-        className="w-75 p-2 rounded-md border bg-background text-foreground"
+        className="w-75 p-2 rounded-md border bg-background text-foreground dark:text-white"
       >
-        <option value="">Select existing task</option>
+        <option value="" className="dark:text-gray-900">
+          Select existing task
+        </option>
         {tasks.map((task) => (
-          <option key={task.id} value={task.id}>
+          <option key={task.id} value={task.id} className="dark:text-gray-900">
             {task.title}
           </option>
         ))}
       </select>
 
-      <div className="text-muted-foreground">OR</div>
+      <div className="text-muted-foreground dark:text-white">OR</div>
 
       <input
         type="text"
         placeholder="Enter new task name"
         value={newTaskName}
         onChange={handleInputChange}
-        className="w-75 p-2 rounded-md border bg-background text-foreground"
+        className="w-75 p-2 rounded-md border bg-background text-foreground dark:text-white"
       />
-
-      {/* <button
-        type="submit"
-        className="bg-indigo-600 text-white px-4 py-1 rounded hover:bg-indigo-700 transition"
-      >
-        Add Task
-      </button> */}
     </div>
   );
 };
