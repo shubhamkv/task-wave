@@ -6,7 +6,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node index.js",
     "generate:yaml": "node swagger/generateOpenAPI.js > docs/openapi.yaml",
-    "build:redoc": "redocly build-docs docs/openapi.yaml -o docs/redoc-static.html",
+    "build:redoc": "redocly build-docs docs/openapi.yaml -o docs/redoc.html",
     "generate:docs": "npm run generate:yaml && npm run build:redoc",
     "dev": "nodemon index.js"
   },
