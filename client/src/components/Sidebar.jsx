@@ -42,7 +42,7 @@ export const Sidebar = ({ collapsed, toggleSidebar }) => {
             </NavLink>
           )}
           <button onClick={toggleSidebar}>
-            <FaBars className="text-xl" />
+            <FaBars className="text-xl cursor-pointer" />
           </button>
         </div>
         <nav className="flex flex-col space-y-2 px-4">

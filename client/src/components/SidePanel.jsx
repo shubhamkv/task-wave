@@ -3,8 +3,8 @@ import sidePanelImage from "../assets/register.svg";
 
 export const SidePanel = () => {
   return (
-    <div className="bg-gradient-to-b from-indigo-500 via-purple-500 to-pink-400 text-white flex flex-col items-center justify-start p-10">
-      <div className="mt-20 mb-6 text-center px-4">
+    <div className="h-screen bg-gradient-to-b from-indigo-500 via-purple-500 to-pink-400 text-white flex flex-col items-center justify-between p-8">
+      <div className="text-center px-4">
         <h1 className="text-4xl text-indigo-600 md:text-5xl font-extrabold mb-3">
           TaskWave
         </h1>
