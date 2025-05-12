@@ -11,6 +11,10 @@ const options = {
         url: "http://localhost:3000/api",
         description: "Task Wave Development Server",
       },
+      {
+        url: "https://task-wave-backend.onrender.com/api",
+        description: "Task Wave Production Server",
+      },
     ],
     components: {
       securitySchemes: {
