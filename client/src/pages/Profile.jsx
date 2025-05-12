@@ -73,7 +73,7 @@ export const Profile = () => {
   if (!user) return <div className="text-center py-10">Loading...</div>;
 
   return (
-    <div className="max-w-md mx-auto bg-white dark:bg-gray-800 shadow-lg rounded-2xl p-6 mt-10 transition-all">
+    <div className="max-w-md mx-auto bg-slate-200 dark:bg-gray-800 shadow-lg rounded-2xl p-6 mt-10 transition-all">
       {/* Avatar + Name */}
       <div className="flex flex-col items-center">
         <div className="bg-blue-600 text-white w-16 h-16 rounded-full flex items-center justify-center text-2xl font-bold">

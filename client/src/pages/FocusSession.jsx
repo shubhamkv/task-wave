@@ -8,9 +8,11 @@ export const FocusSession = () => {
     <SessionProvider>
       <div className="p-4 md:p-8 bg-background text-foreground min-h-screen">
         <div className="text-center space-y-2 mb-10">
-          <h1 className="text-3xl md:text-5xl font-bold">Focus Session</h1>
-          <p className="text-muted-foreground">
-            Stay focused, crush your goals! 🚀
+          <h1 className="text-3xl md:text-5xl font-bold dark:text-white">
+            Focus Session
+          </h1>
+          <p className="text-muted-foreground dark:text-gray-400">
+            Stay focused, crush your goals!
           </p>
         </div>
 

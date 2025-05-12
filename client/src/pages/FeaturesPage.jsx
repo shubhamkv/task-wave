@@ -63,7 +63,7 @@ export const FeaturesPage = () => {
                 <img
                   src={feature.image}
                   alt={feature.title}
-                  className="rounded-2xl shadow-2xl max-w-xs sm:max-w-sm md:max-w-md"
+                  className="rounded-2xl shadow-2xl max-w-xs sm:max-w-sm md:max-w-md transition-transform hover:scale-[1.02]"
                 />
               </div>
 
