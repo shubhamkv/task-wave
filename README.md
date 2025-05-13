@@ -7,7 +7,7 @@
 ## 🌐 Live Demo
 
 > Hosted live on a production server  
-> **🔗 [task-wavee.netlify.app](task-wavee.netlify.app)** 
+> **🔗 [task-wavee.netlify.app](https://task-wavee.netlify.app)** 
 
 ---
 
@@ -72,5 +72,5 @@
 
 ## 📘 API Documentation
 
-- **Interactive Testing:** Swagger UI → [task-wavee-api-docs.netlify.app/swagger-ui.html](task-wavee-api-docs.netlify.app/swagger-ui.html)
-- **Readable Docs:** Redoc → [task-wavee-api-docs.netlify.app/redoc.html](task-wavee-api-docs.netlify.app/redoc.html)
+- **Interactive Testing:** Swagger UI → [task-wavee-api-docs.netlify.app/swagger-ui.html](https://task-wavee-api-docs.netlify.app/swagger-ui.html)
+- **Readable Docs:** Redoc → [task-wavee-api-docs.netlify.app/redoc.html](https://task-wavee-api-docs.netlify.app/redoc.html)
