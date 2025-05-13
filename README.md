@@ -72,5 +72,5 @@
 
 ## 📘 API Documentation
 
-- **Interactive Testing:** Swagger UI → [task-wavee-api-docs.netlify.app/swagger-ui.html](https://task-wavee-api-docs.netlify.app/swagger-ui.html)
-- **Readable Docs:** Redoc → [task-wavee-api-docs.netlify.app/redoc.html](https://task-wavee-api-docs.netlify.app/redoc.html)
+- **Interactive Testing:** Swagger UI → **[task-wavee-api-docs.netlify.app/swagger-ui.html](https://task-wavee-api-docs.netlify.app/swagger-ui.html)**
+- **Readable Docs:** Redoc → **[task-wavee-api-docs.netlify.app/redoc.html](https://task-wavee-api-docs.netlify.app/redoc.html)**
